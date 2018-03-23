@@ -16,28 +16,33 @@ app.use(express.static(publicPath));
 io.on('connection' , ( socket ) => {
   console.log('new connection');
 
-  socket.emit('newMessage',{
-    from : 'jon@mail.com',
-    text : 'emit',
-    created : new Date().getTime()
+  socket.emit('newMessage', {
+    from: 'Admin',
+    text: 'Welcome to the chat app',
+    createdAt: new Date().getTime(),
   });
 
-  socket.broadcast.emit('newMessage',{
-    from : 'jon@mail.com',
-    text : 'broadcast',
-    created : new Date().getTime()
+  socket.broadcast.emit('newMessage', {
+    from: 'Admin',
+    text: 'new user join',
+    createdAt: new Date().getTime(),
   });
 
-  
   socket.on('createMessage', (newEmail) => {
 
     console.log( 'createMessage' , newEmail );
 
     io.emit('newMessage', {
-      from : 'jon@mail.com',
-      text : 'wathss',
-      created : 123
+      from: newEmail.from,
+      text: newEmail.text,
+      createdAt : new Date().getTime(),
     });
+
+    // socket.broadcast.emit('newMessage' , {
+    //   from : 'jon@mail.com',
+    //   text : 'wathss',
+    //   createdAt : new Date().getTime(),
+    // });
 
   });
 
