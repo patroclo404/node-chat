@@ -5,6 +5,7 @@ const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
 const http = require('http');
 const PORT = process.env.PORT || 3000 ;
+const { generateMessage } = require('./utils/message');
 
 let app = express();
 let server = http.createServer(app);
@@ -16,27 +17,16 @@ app.use(express.static(publicPath));
 io.on('connection' , ( socket ) => {
   console.log('new connection');
 
-  socket.emit('newMessage', {
-    from: 'Admin',
-    text: 'Welcome to the chat app',
-    createdAt: new Date().getTime(),
-  });
+  socket.emit('newMessage', generateMessage('Admin' , 'Welcome to chat room!!') );
 
-  socket.broadcast.emit('newMessage', {
-    from: 'Admin',
-    text: 'new user join',
-    createdAt: new Date().getTime(),
-  });
+  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!') );
 
-  socket.on('createMessage', (newEmail) => {
+  socket.on('createMessage', (message , callback) => {
 
-    console.log( 'createMessage' , newEmail );
+    console.log('createMessage',message);
 
-    io.emit('newMessage', {
-      from: newEmail.from,
-      text: newEmail.text,
-      createdAt : new Date().getTime(),
-    });
+    io.emit('newMessage', generateMessage(message.from,message.text));
+    callback('from server');
 
     // socket.broadcast.emit('newMessage' , {
     //   from : 'jon@mail.com',
