@@ -12,18 +12,20 @@ socket.on('disconnect' , () => {
   console.log('Disconected')
 });
 
-socket.on('newMessage', (email) => {
+socket.on('newMessage', (message) => {
+  let formatedTime = moment(message.createAt).format('h:mm a');
   let li = document.createElement('li');
-  let content = document.createTextNode(`${email.from} : ${email.text}`);
+  let content = document.createTextNode(`${message.from} at ${formatedTime} : ${message.text}`);
   li.appendChild(content);
   ol.appendChild(li);
-  console.log(email);
+  console.log(message);
 });
 
 
 socket.on('newLocationMessage', (message) => {
   let li = document.createElement('li');
-  let content = document.createTextNode(`${message.from} : `);
+  let formatedTime = moment(message.createAt).format('h:mm a');
+  let content = document.createTextNode(`${message.from} at ${formatedTime} : `);
   let link = document.createElement('a');
   let linkText = document.createTextNode("Open location");
   link.title = "Open location";
