@@ -5,22 +5,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Chat js</title>
     <script src="/socket.io/socket.io.js" ></script>
     
   </head>
   
   <body>
-    
-    <h1> Trouble chat </h1>
+    <div class="chat">
 
-    <ol id="msg"></ol>
-    
-    <input type="text" name="text" id="text" placeholder="Some text">
-    <button id="btn_enviar">
-      Enviar
-    </button>
-    <button id="btn_geo_loc">Send location</button>
+      <div class="chat__sidebar">
+        <h3>People</h3>
+        <div id="users"></div>
+      </div>
+      <div class="chat__main">
+        <ol class="chat__messages" id="msg"></ol>
+
+        <div class="chat__footer">
+          <form onclick="return false;">
+            <input type="text" name="text" id="text" placeholder="Some text" autofocus autocomplete="off">
+            <button id="btn_enviar">
+              Enviar
+            </button>
+            <button id="btn_geo_loc">Send location</button>
+          </form>
+        </div>
+        
+
+      </div>
+
+
+    </div>
+
     
     <script src="/js/main.js"></script>
   </body>

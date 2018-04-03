@@ -41,6 +41,7 @@ document.getElementById('btn_enviar').addEventListener('click', () => {
     from: 'user',
     text: input.value
   }, (data) => {
+    input.value = "";
     console.log('got it', data);
   });
 
