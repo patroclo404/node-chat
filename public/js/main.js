@@ -32,19 +32,31 @@ socket.on('newMessage', (message) => {
 
 
 socket.on('newLocationMessage', (message) => {
-  let li = document.createElement('li');
+
   let formatedTime = moment(message.createAt).format('h:mm a');
-  let content = document.createTextNode(`${message.from} at ${formatedTime} : `);
-  let link = document.createElement('a');
-  let linkText = document.createTextNode("Open location");
-  link.title = "Open location";
-  link.appendChild(linkText);
-  link.setAttribute('href', message.url );
-  link.setAttribute('target', '_blank' );
-  li.appendChild(content);
-  li.appendChild(link);
-  ol.appendChild(li);
-  console.log(message);
+  let tamplate = $('#location_template').html();
+  let html = Mustache.render(tamplate, {
+    from: message.from,
+    location: message.url,
+    createdAt: formatedTime
+  });
+  debugger;
+  $('#msg').append(html);
+
+
+  // let li = document.createElement('li');
+  // let formatedTime = moment(message.createAt).format('h:mm a');
+  // let content = document.createTextNode(`${message.from} at ${formatedTime} : `);
+  // let link = document.createElement('a');
+  // let linkText = document.createTextNode("Open location");
+  // link.title = "Open location";
+  // link.appendChild(linkText);
+  // link.setAttribute('href', message.url );
+  // link.setAttribute('target', '_blank' );
+  // li.appendChild(content);
+  // li.appendChild(link);
+  // ol.appendChild(li);
+  // console.log(message);
 });
 
 document.getElementById('btn_enviar').addEventListener('click', () => {
