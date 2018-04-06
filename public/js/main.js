@@ -1,4 +1,4 @@
-var socket = io();
+let socket = io();
 let input = document.getElementById('text');
 let ol = document.getElementById('msg');
 
@@ -13,12 +13,21 @@ socket.on('disconnect' , () => {
 });
 
 socket.on('newMessage', (message) => {
+
   let formatedTime = moment(message.createAt).format('h:mm a');
-  let li = document.createElement('li');
-  let content = document.createTextNode(`${message.from} at ${formatedTime} : ${message.text}`);
-  li.appendChild(content);
-  ol.appendChild(li);
-  console.log(message);
+  let tamplate = $('#messgge_template').html();
+  let html = Mustache.render(tamplate , {
+    text : message.text,
+    from : message.from,
+    createdAt : formatedTime
+  });
+  $('#msg').append(html);
+
+  // let li = document.createElement('li');
+  // let content = document.createTextNode(`${message.from} at ${formatedTime} : ${message.text}`);
+  // li.appendChild(content);
+  // ol.appendChild(li);
+  // console.log(message);
 });
 
 
