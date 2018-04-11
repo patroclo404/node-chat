@@ -19,9 +19,17 @@ let scrollToBottom = () => {
 };
 
 socket.on('connect', () => {
-  console.log('Connected to server');
+  let params = $.deparam(window.location.search);
 
-  
+  socket.emit('join', params, (error) => {
+    if (error) {
+      alert('missing field');
+      window.location.href = "/";
+    }else{
+      console.log('Logged in');
+    }
+  });
+
 });
 
 socket.on('disconnect' , () => {

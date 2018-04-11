@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const http = require('http');
 const PORT = process.env.PORT || 3000 ;
 const { generateMessage, generateLocationMessage } = require('./utils/message');
+const { isValidString } = require('./utils/utils');
 
 let app = express();
 let server = http.createServer(app);
@@ -20,6 +21,13 @@ io.on('connection' , ( socket ) => {
   socket.emit('newMessage', generateMessage('Admin' , 'Welcome to chat room!!') );
 
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!') );
+
+  socket.on('join' , (params, callback) =>{
+    if ( !isValidString(params.name) || !isValidString(params.room) ) {
+      callback('missingField');
+    }
+    callback();
+  });
 
   socket.on('createMessage', (message , callback) => {
 
