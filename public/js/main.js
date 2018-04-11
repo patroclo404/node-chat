@@ -2,6 +2,22 @@ let socket = io();
 let input = document.getElementById('text');
 let ol = document.getElementById('msg');
 
+let scrollToBottom = () => {
+  
+  let messages = $('#msg');
+  let newMessage = messages.children('li:last-child');
+  
+  var clientHeight = messages.prop('clientHeight');
+  var scrollTop = messages.prop('scrollTop');
+  var scrollHeight = messages.prop('scrollHeight');
+  var newMessageHeight = newMessage.innerHeight();
+  var lastMessageHeight = newMessage.prev().innerHeight();
+  if (clientHeight + scrollTop + newMessageHeight + lastMessageHeight >= scrollHeight) {
+    messages.scrollTop(scrollHeight);
+  }
+
+};
+
 socket.on('connect', () => {
   console.log('Connected to server');
 
@@ -22,12 +38,7 @@ socket.on('newMessage', (message) => {
     createdAt : formatedTime
   });
   $('#msg').append(html);
-
-  // let li = document.createElement('li');
-  // let content = document.createTextNode(`${message.from} at ${formatedTime} : ${message.text}`);
-  // li.appendChild(content);
-  // ol.appendChild(li);
-  // console.log(message);
+  scrollToBottom();
 });
 
 
@@ -40,23 +51,8 @@ socket.on('newLocationMessage', (message) => {
     location: message.url,
     createdAt: formatedTime
   });
-  debugger;
   $('#msg').append(html);
 
-
-  // let li = document.createElement('li');
-  // let formatedTime = moment(message.createAt).format('h:mm a');
-  // let content = document.createTextNode(`${message.from} at ${formatedTime} : `);
-  // let link = document.createElement('a');
-  // let linkText = document.createTextNode("Open location");
-  // link.title = "Open location";
-  // link.appendChild(linkText);
-  // link.setAttribute('href', message.url );
-  // link.setAttribute('target', '_blank' );
-  // li.appendChild(content);
-  // li.appendChild(link);
-  // ol.appendChild(li);
-  // console.log(message);
 });
 
 document.getElementById('btn_enviar').addEventListener('click', () => {
@@ -65,7 +61,6 @@ document.getElementById('btn_enviar').addEventListener('click', () => {
     text: input.value
   }, (data) => {
     input.value = "";
-    console.log('got it', data);
   });
 
 });
