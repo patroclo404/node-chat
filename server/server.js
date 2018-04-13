@@ -18,15 +18,19 @@ app.use(express.static(publicPath));
 io.on('connection' , ( socket ) => {
   console.log('new connection');
 
-  socket.emit('newMessage', generateMessage('Admin' , 'Welcome to chat room!!') );
+  
+  socket.on('join' , (params, callback) => {
 
-  socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!') );
-
-  socket.on('join' , (params, callback) =>{
     if ( !isValidString(params.name) || !isValidString(params.room) ) {
       callback('missingField');
     }
+
+    socket.join(params.room);
+
+    socket.emit('newMessage', generateMessage('Admin' , 'Welcome to chat room!!') );
+    socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`) );
     callback();
+
   });
 
   socket.on('createMessage', (message , callback) => {
@@ -48,7 +52,7 @@ io.on('connection' , ( socket ) => {
 });
 
 
-server.listen(PORT, ()=>{
+server.listen(PORT, () => {
   console.log(`Started up at port ${PORT}`);
 });
 
