@@ -1,5 +1,4 @@
-var expect = require('expect');
-
+const expect = require('expect');
 var { isValidString } = require('./utils');
 
 describe('isValidString', () => {

@@ -20,7 +20,6 @@ let scrollToBottom = () => {
 
 socket.on('connect', () => {
   let params = $.deparam(window.location.search);
-
   socket.emit('join', params, (error) => {
     if (error) {
       alert('missing field');
@@ -29,6 +28,16 @@ socket.on('connect', () => {
       console.log('Logged in');
     }
   });
+});
+
+socket.on('updateUserList', (users) => {
+  const ol = $('<ol></ol>');
+
+  users.forEach( (user) => {
+    ol.append($('<li></li>').text(user));
+  });
+
+  $('#users').html(ol);
 
 });
 

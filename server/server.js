@@ -1,12 +1,15 @@
 const path = require('path');
-const publicPath = path.join(__dirname, '../public');
+const http = require('http');
 const express = require('express');
+const publicPath = path.join(__dirname, '../public');
 const socketIO = require('socket.io');
 const bodyParser = require('body-parser');
-const http = require('http');
 const PORT = process.env.PORT || 3000 ;
+
 const { generateMessage, generateLocationMessage } = require('./utils/message');
 const { isValidString } = require('./utils/utils');
+const { Users } = require('./utils/users');
+const users = new Users();
 
 let app = express();
 let server = http.createServer(app);
@@ -22,11 +25,14 @@ io.on('connection' , ( socket ) => {
   socket.on('join' , (params, callback) => {
 
     if ( !isValidString(params.name) || !isValidString(params.room) ) {
-      callback('missingField');
+      return callback('missingField');
     }
 
     socket.join(params.room);
+    users.removeUser(socket.id);
+    users.addUser(socket.id, params.name, params.room);
 
+    io.to(params.room).emit('updateUserList', users.getUserList(params.room));
     socket.emit('newMessage', generateMessage('Admin' , 'Welcome to chat room!!') );
     socket.broadcast.to(params.room).emit('newMessage', generateMessage('Admin', `${params.name} has joined.`) );
     callback();
@@ -47,7 +53,11 @@ io.on('connection' , ( socket ) => {
   });
 
   socket.on('disconnect', ( reason ) => {
-    console.log(reason);
+    const userLeave = users.removeUser(socket.id);
+    if (userLeave) {
+      io.to(userLeave.room).emit('updateUserList', users.getUserList(userLeave.room));
+      io.emit('newMessage', generateMessage('Admin', `User ${userLeave.name} leaves the room`));
+    }
   });
 });
 
