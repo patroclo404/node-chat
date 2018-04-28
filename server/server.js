@@ -19,11 +19,9 @@ app.use(bodyParser.json());
 app.use(express.static(publicPath));
 
 io.on('connection' , ( socket ) => {
-  console.log('new connection');
 
-  
   socket.on('join' , (params, callback) => {
-
+    
     if ( !isValidString(params.name) || !isValidString(params.room) ) {
       return callback('missingField');
     }
@@ -39,17 +37,20 @@ io.on('connection' , ( socket ) => {
 
   });
 
-  socket.on('createMessage', (message , callback) => {
-
-    console.log('createMessage',message);
-    io.emit('newMessage', generateMessage(message.from,message.text));
+  socket.on('createMessage', (message,callback) => {
+    let user = users.getUser(socket.id);
+    if (user && isValidString(message.text)) {
+      io.to(user.room).emit('newMessage', generateMessage(user.name,message.text));
+    }
     callback('from server');
-    
+
   });
   
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin' , coords.lat , coords.lon) );
-
+    let user = users.getUser(socket.id);
+    if (user) {
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name , coords.lat , coords.lon) );
+    }
   });
 
   socket.on('disconnect', ( reason ) => {

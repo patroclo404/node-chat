@@ -46,7 +46,6 @@ socket.on('disconnect' , () => {
 });
 
 socket.on('newMessage', (message) => {
-
   let formatedTime = moment(message.createAt).format('h:mm a');
   let tamplate = $('#messgge_template').html();
   let html = Mustache.render(tamplate , {
@@ -74,7 +73,6 @@ socket.on('newLocationMessage', (message) => {
 
 document.getElementById('btn_enviar').addEventListener('click', () => {
   socket.emit('createMessage', {
-    from: 'user',
     text: input.value
   }, (data) => {
     input.value = "";
